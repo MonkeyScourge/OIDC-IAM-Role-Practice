@@ -26,11 +26,20 @@ jobs:
         # masking natively before actions
       - name: Mask Account ID natively 1
         run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+
       - name: Mask Account ID natively 2
         run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
 
       - name: Checkout Code
         uses: actions/checkout@v4
+
+        # environment secret debugging
+      - name: Debug Environment Secret
+        run: |
+          if [ -z "${{ secrets.AWS_ACCOUNT_ID }}"; then
+            echo "Secret missing"
+            exit 1
+          fi
 
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v4
