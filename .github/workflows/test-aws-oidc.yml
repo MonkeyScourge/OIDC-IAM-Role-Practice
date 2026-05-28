@@ -1,0 +1,52 @@
+name: OIDC Federation
+
+on:
+  push:
+    branches: [ main ]
+
+
+permissions:
+  id-token: write
+  contents: read
+
+# Mask three ways:
+#  - Environmental secret
+#  - Github ::add-mask::
+#  - Aws actions - mask-aws-accound-id
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # access environment for aws_acc_id
+    environment: production
+
+    steps:
+
+        # masking natively before actions
+      - name: Mask Account ID natively 1
+        run: echo "::add-mask::${{ env.AWS_ACCOUNT_ID }}"
+      - name: Mask Account ID natively 2
+        run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # referencing aws_id using environmental secrets
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role
+          aws-region: us-west-2
+
+          # masking using aws-actions
+          mask-aws-account-id: true
+
+        # checking if oidc successful
+      - name: Verify Identity
+        run: aws sts get-caller-identity
+
+
+#      - name: Deploy
+#        run: aws s3 sync ./dist s3://my-bucket
+
