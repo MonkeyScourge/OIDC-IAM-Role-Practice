@@ -25,7 +25,7 @@ jobs:
 
         # masking natively before actions
       - name: Mask Account ID natively 1
-        run: echo "::add-mask::${{ env.AWS_ACCOUNT_ID }}"
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
       - name: Mask Account ID natively 2
         run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
 
@@ -35,9 +35,11 @@ jobs:
       - name: Configure AWS Creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
+
           # referencing aws_id using environmental secrets
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role
           aws-region: us-west-2
+          audience: sts.amazonaws.com
 
           # masking using aws-actions
           mask-aws-account-id: true
