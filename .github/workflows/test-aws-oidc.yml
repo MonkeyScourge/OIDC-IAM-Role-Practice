@@ -36,7 +36,7 @@ jobs:
         # environment secret debugging
       - name: Debug Environment Secret
         run: |
-          if [ -z "${{ secrets.AWS_ACCOUNT_ID }}"; then
+          if [ -z "${{ secrets.AWS_ACCOUNT_ID }}" ]; then
             echo "Secret missing"
             exit 1
           fi
