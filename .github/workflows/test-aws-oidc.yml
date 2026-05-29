@@ -28,7 +28,7 @@ jobs:
         run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
 
       - name: Mask Account ID natively 2
-        run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
+        run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/test-role"
 
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
         with:
 
           # referencing aws_id using environmental secrets
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/test-role
           aws-region: us-west-2
           audience: sts.amazonaws.com
 
