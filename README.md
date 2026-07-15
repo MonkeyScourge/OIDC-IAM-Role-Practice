@@ -3,15 +3,39 @@
 Federating Github Actions to assume AWS IAM role via OIDC
 
 ## Purpose
-Securely granting cloud permissions to external identities like GitHubActions or Kubernetes without hardcoding secrets
+This repo demonstrates OIDC authentication granting access to AWS Cloud permissions to GitHub Actions without hard coded secrets. This serves as learning excersize and a practical reference for identity federation
 
 ## Why worth learning?
-Eliminates static credentials, reducing breach risk, and widely adopted in CI/CD and cloud native security
+Eliminates static credentials, reducing breach risk. Widely adopted in CI/CD and cloud native security
 
 ## Worth Testing?
-It's essential to test because misconfigured trust policies and audience claims enable critical privelege escalation paths for bad actors
+Misconfigured trust policies or audience claims enable can privelege escalation. Testing makes sure that security boundary is working
 
 
 ## Trust Policy
-
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::xxxxxxxxxxxx:oidc-provider/token.actions.githubusercontent.com"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "token.actions.githubusercontent.com:sub": [
+                        "repo:MonkeyScourge/OIDC-IAM-Role-Practice:*",
+                        "repo:MonkeyScourge/OIDC-IAM-Role-Practice:*"
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
 
